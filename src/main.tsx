@@ -5,13 +5,14 @@ import store from "./store/Store.ts";
 import { StrictMode } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "./views/Home.tsx";
+import PublicLayout from "./layouts/PublicLayout.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Provider store={store}>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/*" element={<PublicLayout />} />
         </Routes>
       </BrowserRouter>
     </Provider>

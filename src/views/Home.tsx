@@ -1,33 +1,53 @@
 import React, { ChangeEvent } from "react";
 import TextInput from "../components/TextInput";
 import { Button } from "../components/ButtonComponent";
+import { useAppDispatch, useAppSelector } from "../store/Hook";
+import { decodeURL, encodeURL } from "../store/Action";
+import { clearDecodeData, clearEncodedData } from "../store/Shortener.slice";
 
 export type Tab = "encode" | "decode";
 
 const Home = () => {
-  const [Input, setInputs] = React.useState("");
-  const [currentTab, setCurrentTab] = React.useState<Tab>("decode");
+  const [Input, setInput] = React.useState("");
+  const [currentTab, setCurrentTab] = React.useState<Tab>("encode");
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    // setInputs({ Inputs, [e.target.name]: e.target.value });
+    setInput(e.target.value);
   };
-  return (
-    <div className="bg-blue-50 h-screen flex flex-col items-center justify-center text-center space-y-6">
-      <div className="font-bold text-5xl text-blue-400 -mt-44">
-        Create Short Link
-      </div>
 
+  const dispatch = useAppDispatch();
+  const { loading, error, encodeData, decodeData } = useAppSelector(
+    (state) => state.reducer
+  );
+
+  const handleTabSwitch = (tab: Tab) => {
+    // console.log(tab, "tabbbb");
+    setCurrentTab(tab);
+    dispatch(clearEncodedData());
+    dispatch(clearDecodeData());
+  };
+
+  const decodeAPI = () => {
+    dispatch(decodeURL({ url: Input }));
+  };
+
+  const encodeAPI = () => {
+    dispatch(encodeURL({ url: Input }));
+  };
+
+  return (
+    <div className="h-screen flex flex-col items-center justify-center text-center space-y-6 -mt-44">
+      <div className="font-bold text-5xl text-blue-400">Create Short Link</div>
       <div className="text-gray-600 text-sm max-w-xl">
         Indi Link Shortener lets you customize your links for a more personal
         touch—making them clearer, and easier to share.
       </div>
-
       <div className="flex items-center">
         <Button
           className="mt-3.5"
           size="sm"
-          variant={currentTab === "decode" ? "primary" : "ghost"}
-          onClick={() => setCurrentTab("decode")}
+          variant={currentTab === "encode" ? "primary" : "ghost"}
+          onClick={() => handleTabSwitch("encode")}
         >
           Encode
         </Button>
@@ -35,13 +55,12 @@ const Home = () => {
         <Button
           className="mt-3.5 ml-3"
           size="sm"
-          variant={currentTab === "encode" ? "primary" : "ghost"}
-          onClick={() => setCurrentTab("encode")}
+          variant={currentTab === "decode" ? "primary" : "ghost"}
+          onClick={() => handleTabSwitch("decode")}
         >
           Decode
         </Button>
       </div>
-
       <div className="flex items-center">
         <TextInput
           value={Input}
@@ -53,37 +72,45 @@ const Home = () => {
               ? "e.g https://www.facebook.com"
               : "e.g https://indi.ca/hAgtht"
           }
-          error={Input}
           extraClass="mt-4"
           type="text"
         />
 
-        {currentTab === "decode" ? (
-          <Button
-            disabled={Input ? false : true}
-            className="ml-3 mt-3.5"
-            height="h-10"
-            variant="primary"
-            onClick={() => alert("Clicked!")}
-          >
-            Shorten
-          </Button>
-        ) : (
-          <Button
-            disabled={Input ? false : true}
-            className="ml-3 mt-3.5"
-            height="h-10"
-            variant="primary"
-            onClick={() => alert("Clicked!")}
-          >
-            Decode
-          </Button>
-        )}
+        <div>
+          {currentTab === "encode" ? (
+            <Button
+              disabled={Input ? false : true}
+              isLoading={loading}
+              className="ml-3 mt-3.5"
+              height="h-10"
+              variant="primary"
+              onClick={() => encodeAPI()}
+            >
+              Shorten
+            </Button>
+          ) : (
+            <Button
+              disabled={Input ? false : true}
+              isLoading={loading}
+              className="ml-3 mt-3.5"
+              height="h-10"
+              variant="primary"
+              onClick={() => decodeAPI()}
+            >
+              Decode
+            </Button>
+          )}
+        </div>
       </div>
-
-      <div className="bg-white w-[20rem] px-2 py-2 text-center text-sm text-gray-600">
-        https://tola.com
-      </div>
+      {(currentTab === "encode" && encodeData?.shortenedlink) ||
+      (currentTab === "decode" && decodeData?.originalURL) ||
+      error ? (
+        <div className="bg-white w-[20rem] px-2 py-2 text-center text-sm text-gray-600">
+          {currentTab === "encode" && encodeData?.shortenedlink}
+          {currentTab === "decode" && decodeData?.originalURL}
+          {error && <span className="text-red-500">{error}</span>}
+        </div>
+      ) : null}
     </div>
   );
 };
