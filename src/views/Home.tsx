@@ -68,7 +68,7 @@ const Home = () => {
           name="firstName"
           inputWidth="w-[31rem]"
           placeholder={
-            currentTab === "decode"
+            currentTab === "encode"
               ? "e.g https://www.facebook.com"
               : "e.g https://indi.ca/hAgtht"
           }

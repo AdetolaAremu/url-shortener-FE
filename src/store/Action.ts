@@ -31,7 +31,7 @@ export const decodeURL = createAsyncThunk<
 >("shortener/decodeUrL", async (data, thunkAPI) => {
   try {
     const response = await axios.post(`${service_url}/decode`, data);
-    console.log(response.data.data);
+    // console.log(response.data.data);
     return response.data.data;
   } catch (error: any) {
     return thunkAPI.rejectWithValue(error.message);
