@@ -29,7 +29,7 @@ const TextInput: React.FC<TextInputProps> = ({
       <div className="relative">
         <input
           type={type}
-          className={`block ${inputWidth} ${extraClass} className="text-sm w-full px-4 py-2 border border-solid border-gray-300 rounded mt-4"`}
+          className={`block ${inputWidth} ${extraClass} className="text-sm px-4 py-2 border border-solid border-gray-300 rounded mt-4"`}
           placeholder={placeholder}
           value={value}
           onChange={onChange}

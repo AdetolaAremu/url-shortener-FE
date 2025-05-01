@@ -1,107 +1,11 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import axios from "axios";
-
-export interface IEncodeDecode {
-  url: string;
-}
-
-export interface IEncodeResponse {
-  shortenedlink: string;
-}
-
-export interface IDecodeResponse {
-  id: string;
-  shortCode: string;
-  originalURL: string;
-  generatedURL: string;
-}
-
-interface IStatResponse {
-  shortCode: string;
-  originalURL: string;
-  generatedURL: string;
-  mostVisitedCountry: string;
-  mostVisitedRegion: string;
-  totalHits: number;
-  lastFifteenHits: {
-    ip: string;
-    agent: string;
-    country: string;
-    region: string;
-    timestamp: string;
-  }[];
-}
-
-interface IShortenerState {
-  encodeData: IEncodeResponse | null;
-  decodeData: IDecodeResponse | null;
-  shortCodeStat: IStatResponse | null;
-  redirectResult: any;
-  loading: boolean;
-  error: string | null;
-}
-
-export const encodeURL = createAsyncThunk<
-  IEncodeResponse,
-  IEncodeDecode,
-  { rejectValue: string }
->("shortener/encodeURL", async (data, thunkAPI) => {
-  try {
-    const response = await axios.post(
-      "http://localhost:3000/api/v1/encode",
-      data
-    );
-    return response.data;
-  } catch (error: any) {
-    return thunkAPI.rejectWithValue(error.message);
-  }
-});
-
-export const decodeURL = createAsyncThunk<
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import {
   IDecodeResponse,
-  IEncodeDecode,
-  { rejectValue: string }
->("shortener/decodeUrL", async (data, thunkAPI) => {
-  try {
-    const response = await axios.post(
-      "http://localhost:3000/api/v1/decode",
-      data
-    );
-    return response.data;
-  } catch (error: any) {
-    return thunkAPI.rejectWithValue(error.message);
-  }
-});
-
-export const redirectURL = createAsyncThunk<
-  any,
-  string,
-  { rejectValue: string }
->("shortener/redirect", async (shortCode, thunkAPI) => {
-  try {
-    const response = await axios.get(
-      `http://localhost:3000/api/v1/${shortCode}`
-    );
-    return response;
-  } catch (error: any) {
-    return thunkAPI.rejectWithValue(error.message);
-  }
-});
-
-export const getShortCodeStat = createAsyncThunk<
-  any,
-  string,
-  { rejectValue: string }
->("shortener/stats", async (shortCode, thunkAPI) => {
-  try {
-    const response = await axios.get(
-      `http://localhost:3000/api/v1/statistics/${shortCode}`
-    );
-    return response.data;
-  } catch (error: any) {
-    return thunkAPI.rejectWithValue(error.message);
-  }
-});
+  IEncodeResponse,
+  IStatResponse,
+} from "../interfaces/response/Shortener.response";
+import { IShortenerState } from "../interfaces/types/Shortener.type";
+import { decodeURL, encodeURL, getShortCodeStat, redirectURL } from "./Action";
 
 const initialState: IShortenerState = {
   encodeData: null,
@@ -192,7 +96,7 @@ const shortenerSlice = createSlice({
       })
       .addCase(
         getShortCodeStat.fulfilled,
-        (state, action: PayloadAction<any>) => {
+        (state, action: PayloadAction<IStatResponse>) => {
           state.loading = false;
           state.shortCodeStat = action.payload;
         }
