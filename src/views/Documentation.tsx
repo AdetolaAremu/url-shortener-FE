@@ -63,7 +63,7 @@ const Documentation = () => {
   };
 
   return (
-    <div className="px-6 md:px-20 py-10 space-y-10">
+    <div className="px-6 md:px-20 py-10 space-y-10 -mt-20">
       <div className="mt-20">
         <h1 className="font-bold text-3xl text-blue-400 text-center">
           URL Shortener API

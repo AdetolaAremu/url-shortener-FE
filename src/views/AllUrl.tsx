@@ -36,8 +36,8 @@ const AllUrl = () => {
 
   return (
     <div>
-      <div className="h-screen text-center space-y-6 mt-20">
-        <div className="font-bold text-3xl text-blue-400">
+      <div className="h-screen text-center space-y-6 mt-20 pb-4">
+        <div className="font-bold text-2xl md:text-3xl lg:text-5xl text-blue-400">
           All Shortened Links
         </div>
 
@@ -46,7 +46,7 @@ const AllUrl = () => {
             value={searchInput}
             onChange={handleChange}
             name="Input"
-            inputWidth="w-[31rem]"
+            inputWidth="sm:w-96 md:w-[20rem] lg:w-[25rem] xl:w-[31rem]"
             placeholder="Type here... (search activates after 3 characters)"
             extraClass="mt-4"
             type="text"

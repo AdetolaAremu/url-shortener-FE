@@ -21,15 +21,17 @@ const Statistics = () => {
   };
 
   return (
-    <div className="h-screen text-center space-y-6 mt-20">
-      <div className="font-bold text-3xl text-blue-400">Link Statistics</div>
+    <div className="h-screen text-center space-y-6 mt-20  pb-5">
+      <div className="font-bold text-2xl md:text-3xl lg:text-5xl text-blue-400">
+        URL Statistics
+      </div>
 
       <div className="flex justify-center">
         <TextInput
           value={Input}
           onChange={handleChange}
           name="Input"
-          inputWidth="w-[31rem]"
+          inputWidth="sm:w-96 md:w-[20rem] lg:w-[25rem] xl:w-[31rem]"
           placeholder="e.g https://indi.ca/hAgtht"
           extraClass="mt-4"
           type="text"

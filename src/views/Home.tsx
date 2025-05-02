@@ -37,7 +37,9 @@ const Home = () => {
 
   return (
     <div className="h-screen flex flex-col items-center justify-center text-center space-y-6 -mt-44">
-      <div className="font-bold text-5xl text-blue-400">Create Short Link</div>
+      <div className="font-bold text-2xl md:text-3xl lg:text-5xl text-blue-400">
+        Create Short Link
+      </div>
       <div className="text-gray-600 text-sm max-w-xl">
         Indi Link Shortener lets you customize your links for a more personal
         touch—making them clearer, and easier to share.
@@ -66,7 +68,7 @@ const Home = () => {
           value={Input}
           onChange={handleChange}
           name="firstName"
-          inputWidth="w-[31rem]"
+          inputWidth="sm:w-96 md:w-[20rem] lg:w-[25rem] xl:w-[31rem]"
           placeholder={
             currentTab === "encode"
               ? "e.g https://www.facebook.com"
