@@ -1,13 +1,37 @@
+import { useState } from "react";
+
 const endpoints = [
   {
     method: "POST",
     path: "/api/v1/encode",
     description: "Shortens a given URL and returns the shortened version.",
+    body: {
+      url: "https://very-long-url.com",
+    },
+    response: {
+      success: true,
+      data: {
+        shortenedlink: "https://shortn.er/abc123",
+      },
+    },
   },
   {
     method: "POST",
     path: "/api/v1/decode",
     description: "Retrieves the shortened URL's original URL",
+    body: {
+      url: "https://indi.na/Bp9B13",
+    },
+    response: {
+      success: true,
+      data: {
+        id: "213b4087-0f71-424f-b3b5-b8179c6db5b7",
+        shorCode: "Bp9B13",
+        originalURL:
+          "https://example-of-a-very-long-url.com/with/multiple/paths",
+        generatedURL: "https://indi.na/Bp9B13",
+      },
+    },
   },
   {
     method: "GET",
@@ -16,14 +40,10 @@ const endpoints = [
   },
   {
     method: "GET",
-    path: "/api/v1/:shortCode",
+    path: "/api/v1/statistics/:shortCode",
     description: "Fetches details of a specific shortened URL by ID.",
   },
-  {
-    method: "GET",
-    path: "/api/v1/statistic/:shortCode",
-    description: "Retrieves all the statistics of a shortcode",
-  },
+
   {
     method: "GET",
     path: "/api/v1/list",
@@ -32,6 +52,16 @@ const endpoints = [
 ];
 
 const Documentation = () => {
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+
+  const toggleExpand = (index: number) => {
+    if (expandedIndex === index) {
+      setExpandedIndex(null);
+    } else {
+      setExpandedIndex(index);
+    }
+  };
+
   return (
     <div className="px-6 md:px-20 py-10 space-y-10">
       <div className="mt-20">
@@ -58,23 +88,80 @@ const Documentation = () => {
               key={index}
               className="border border-gray-200 rounded-lg shadow-sm p-5 bg-white"
             >
-              <div className="flex items-center gap-3 mb-2">
-                <span
-                  className={`text-sm font-bold px-2 py-1 rounded ${
-                    endpoint.method === "GET"
-                      ? "bg-green-100 text-green-700"
-                      : endpoint.method === "POST"
-                      ? "bg-blue-100 text-blue-700"
-                      : endpoint.method === "DELETE"
-                      ? "bg-red-100 text-red-700"
-                      : "bg-gray-100 text-gray-700"
-                  }`}
-                >
-                  {endpoint.method}
-                </span>
-                <code className="text-sm text-gray-800">{endpoint.path}</code>
+              <div
+                className="flex items-center justify-between cursor-pointer"
+                onClick={() => toggleExpand(index)}
+              >
+                <div className="flex items-center gap-3">
+                  <span
+                    className={`text-sm font-bold px-2 py-1 rounded ${
+                      endpoint.method === "GET"
+                        ? "bg-green-100 text-green-700"
+                        : endpoint.method === "POST"
+                        ? "bg-blue-100 text-blue-700"
+                        : endpoint.method === "DELETE"
+                        ? "bg-red-100 text-red-700"
+                        : "bg-gray-100 text-gray-700"
+                    }`}
+                  >
+                    {endpoint.method}
+                  </span>
+                  <code className="text-sm text-gray-800">{endpoint.path}</code>
+                </div>
+                {(endpoint.body || endpoint.response) && (
+                  <svg
+                    className={`w-5 h-5 text-gray-500 transform transition-transform ${
+                      expandedIndex === index ? "rotate-180" : ""
+                    }`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                )}
               </div>
-              <p className="text-gray-600 text-sm">{endpoint.description}</p>
+
+              <p className="text-gray-600 text-sm mt-2">
+                {endpoint.description}
+              </p>
+
+              {expandedIndex === index &&
+                (endpoint.body || endpoint.response) && (
+                  <div className="mt-4 pt-4 border-t border-gray-100">
+                    {endpoint.body && (
+                      <div className="mb-4">
+                        <h3 className="text-sm font-semibold text-gray-700 mb-2">
+                          Request Body
+                        </h3>
+                        <div className="bg-gray-50 p-3 rounded-md">
+                          <pre className="text-xs text-gray-800 overflow-x-auto">
+                            {JSON.stringify(endpoint.body, null, 2)}
+                          </pre>
+                        </div>
+                      </div>
+                    )}
+
+                    {endpoint.response && (
+                      <div>
+                        <h3 className="text-sm font-semibold text-gray-700 mb-2">
+                          Response
+                        </h3>
+                        <div className="bg-gray-50 p-3 rounded-md">
+                          <pre className="text-xs text-gray-800 overflow-x-auto">
+                            {JSON.stringify(endpoint.response, null, 2)}
+                          </pre>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
             </div>
           ))}
         </div>
