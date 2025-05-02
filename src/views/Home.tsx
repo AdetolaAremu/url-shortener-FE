@@ -17,7 +17,7 @@ const Home = () => {
 
   const dispatch = useAppDispatch();
   const { loading, error, encodeData, decodeData } = useAppSelector(
-    (state) => state.reducer
+    (state) => state.shortener
   );
 
   const handleTabSwitch = (tab: Tab) => {

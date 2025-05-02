@@ -1,35 +1,39 @@
-import React, { ChangeEvent } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import TextInput from "../components/TextInput";
 import Pagination from "../components/Pagination";
+import { useAppDispatch, useAppSelector } from "../store/Hook";
+import { getAllUrls } from "../store/Action";
 
 const AllUrl = () => {
-  const [Input, setInput] = React.useState("");
-  const [currentPage, setCurrentPage] = React.useState(1);
+  const [page, setPage] = useState(1);
+  const limit = 15;
+  const [searchInput, setSearchInput] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setInput(e.target.value);
+    setSearchInput(e.target.value);
+    setPage(1);
   };
 
-  const urlData = [
-    {
-      shortenedUrl: "https://sho.rt/abc123",
-      originalUrl: "https://example.com/articles/2025/url-tracking",
-      createdAt: "2025-04-27",
-      clicks: 152,
-    },
-    {
-      shortenedUrl: "https://sho.rt/qwe789",
-      originalUrl: "https://anotherdomain.com/path/to/resource",
-      createdAt: "2025-04-20",
-      clicks: 89,
-    },
-    {
-      shortenedUrl: "https://sho.rt/zxy456",
-      originalUrl: "https://somedomain.com/special-offers/deals",
-      createdAt: "2025-04-10",
-      clicks: 240,
-    },
-  ];
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      if (searchInput.length === 0 || searchInput.length >= 3) {
+        setDebouncedSearch(searchInput);
+      }
+    }, 2000);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchInput]);
+
+  const dispatch = useAppDispatch();
+  const { loading, allUrl } = useAppSelector((state) => state.shortener);
+
+  useEffect(() => {
+    dispatch(getAllUrls({ page, limit, searchQuery: debouncedSearch }));
+  }, [page, limit, debouncedSearch, dispatch]);
+
   return (
     <div>
       <div className="h-screen text-center space-y-6 mt-20">
@@ -39,64 +43,77 @@ const AllUrl = () => {
 
         <div className="flex justify-center">
           <TextInput
-            value={Input}
+            value={searchInput}
             onChange={handleChange}
             name="Input"
             inputWidth="w-[31rem]"
-            placeholder="Type here..."
+            placeholder="Type here... (search activates after 3 characters)"
             extraClass="mt-4"
             type="text"
           />
         </div>
 
         <div className="px-4 md:px-16 lg:px-48">
-          <div className="rounded-lg bg-white py-6 px-4 shadow-md overflow-x-auto">
-            <table className="min-w-full table-auto">
-              <thead>
-                <tr className="bg-gray-100 text-sm font-semibold text-gray-700">
-                  <th className="px-4 py-3 text-left whitespace-nowrap">
-                    Shortened URL
-                  </th>
-                  <th className="px-4 py-3 text-left whitespace-nowrap">
-                    Original URL
-                  </th>
-                  <th className="px-4 py-3 text-left whitespace-nowrap">
-                    Created At
-                  </th>
-                  <th className="px-4 py-3 text-center whitespace-nowrap">
-                    Clicks
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="text-sm text-gray-700">
-                {urlData.map((item, index) => (
-                  <tr
-                    key={index}
-                    className={index < urlData.length - 1 ? "border-b" : ""}
-                  >
-                    <td className="px-4 py-3 text-left text-blue-600 break-all">
-                      {item.shortenedUrl}
-                    </td>
-                    <td className="px-4 py-3 text-left break-all">
-                      {item.originalUrl}
-                    </td>
-                    <td className="px-4 py-3 text-left whitespace-nowrap">
-                      {item.createdAt}
-                    </td>
-                    <td className="px-4 py-3 text-center">{item.clicks}</td>
+          {loading ? (
+            "Loading data....."
+          ) : (
+            <div className="rounded-lg bg-white py-6 px-4 shadow-md overflow-x-auto">
+              <table className="min-w-full table-auto">
+                <thead>
+                  <tr className="bg-gray-100 text-sm font-semibold text-gray-700">
+                    <th className="px-4 py-3 text-left whitespace-nowrap">
+                      Shortened URL
+                    </th>
+                    <th className="px-4 py-3 text-left whitespace-nowrap">
+                      Original URL
+                    </th>
+                    <th className="px-4 py-3 text-left whitespace-nowrap">
+                      Highest Country Visits
+                    </th>
+                    <th className="px-4 py-3 text-center whitespace-nowrap">
+                      Clicks
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="text-sm text-gray-700">
+                  {allUrl?.data.paginated?.map((item, index) => (
+                    <tr
+                      key={index}
+                      className={
+                        index < allUrl.data.paginated.length - 1
+                          ? "border-b"
+                          : ""
+                      }
+                    >
+                      <td className="px-4 py-3 text-left text-blue-600 break-all">
+                        {item?.generatedURL}
+                      </td>
+                      <td className="px-4 py-3 text-left break-all">
+                        {item?.originalURL}
+                      </td>
+                      <td className="px-4 py-3 text-left whitespace-nowrap">
+                        {item?.mostVisitedCountry === "unknown"
+                          ? "-"
+                          : (item?.mostVisitedCountry as string)}
+                      </td>
+                      <td className="px-4 py-3 text-center">
+                        {item.totalHits}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
 
-            <div className="mt-4">
-              <Pagination
-                currentPage={currentPage}
-                totalPages={2}
-                onPageChange={(page: number) => setCurrentPage(page)}
-              />
+              <div className="mt-4">
+                <Pagination
+                  currentPage={page}
+                  limit={limit}
+                  totalItems={allUrl?.data?.total || 0}
+                  onPageChange={(newPage) => setPage(newPage)}
+                />
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>

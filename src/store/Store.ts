@@ -3,7 +3,7 @@ import shortenerReducer from "./Shortener.slice";
 
 const store = configureStore({
   reducer: {
-    reducer: shortenerReducer,
+    shortener: shortenerReducer,
   },
 });
 

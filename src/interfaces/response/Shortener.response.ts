@@ -24,3 +24,22 @@ export interface IStatResponse {
     timestamp: string;
   }[];
 }
+
+export interface IAllURL {
+  status: string;
+  message: string;
+  data: {
+    paginated: {
+      shortCode: string;
+      originalURL: string;
+      generatedURL: string;
+      mostVisitedCountry: string | null | undefined | unknown;
+      mostVisitedRegion: string | null | undefined | unknown;
+      totalHits: number;
+    }[];
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}

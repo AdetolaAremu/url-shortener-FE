@@ -1,10 +1,14 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import {
+  IAllURL,
   IDecodeResponse,
   IEncodeResponse,
   IStatResponse,
 } from "../interfaces/response/Shortener.response";
-import { IEncodeDecode } from "../interfaces/types/Shortener.type";
+import {
+  IAllUrlQuery,
+  IEncodeDecode,
+} from "../interfaces/types/Shortener.type";
 import axios from "axios";
 
 const service_url = import.meta.env.VITE_BASE_URL;
@@ -57,7 +61,28 @@ export const getShortCodeStat = createAsyncThunk<
   { rejectValue: string }
 >("shortener/stats", async (shortCode, thunkAPI) => {
   try {
-    const response = await axios.get(`h${service_url}/statistics/${shortCode}`);
+    const response = await axios.get(`${service_url}/statistics/${shortCode}`);
+    return response.data;
+  } catch (error: any) {
+    return thunkAPI.rejectWithValue(error.message);
+  }
+});
+
+export const getAllUrls = createAsyncThunk<
+  IAllURL,
+  IAllUrlQuery,
+  { rejectValue: string }
+>("shortener/allUrl", async (data, thunkAPI) => {
+  try {
+    const params = new URLSearchParams({
+      page: data.page.toString(),
+      limit: data.limit?.toString() || "10",
+      searchQuery: data.searchQuery || "",
+    });
+
+    const response = await axios.get(
+      `${service_url}/list?${params.toString()}`
+    );
     return response.data;
   } catch (error: any) {
     return thunkAPI.rejectWithValue(error.message);

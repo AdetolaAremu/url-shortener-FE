@@ -1,17 +1,25 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
+  IAllURL,
   IDecodeResponse,
   IEncodeResponse,
   IStatResponse,
 } from "../interfaces/response/Shortener.response";
 import { IShortenerState } from "../interfaces/types/Shortener.type";
-import { decodeURL, encodeURL, getShortCodeStat, redirectURL } from "./Action";
+import {
+  decodeURL,
+  encodeURL,
+  getShortCodeStat,
+  redirectURL,
+  getAllUrls,
+} from "./Action";
 
 const initialState: IShortenerState = {
   encodeData: null,
   decodeData: null,
   redirectResult: null,
   shortCodeStat: null,
+  allUrl: null,
   loading: false,
   error: null,
 };
@@ -37,6 +45,11 @@ const shortenerSlice = createSlice({
     },
     clearStatData: (state) => {
       state.shortCodeStat = null;
+      state.error = null;
+      state.loading = false;
+    },
+    clearAllUrl: (state) => {
+      state.allUrl = null;
       state.error = null;
       state.loading = false;
     },
@@ -102,6 +115,22 @@ const shortenerSlice = createSlice({
         }
       )
       .addCase(getShortCodeStat.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload ?? "Failed to load data";
+      })
+
+      // all urls
+      .addCase(getAllUrls.pending, (state) => {
+        (state.loading = true), (state.error = null);
+      })
+      .addCase(
+        getAllUrls.fulfilled,
+        (state, action: PayloadAction<IAllURL>) => {
+          state.loading = false;
+          state.allUrl = action.payload;
+        }
+      )
+      .addCase(getAllUrls.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload ?? "Failed to load data";
       });
