@@ -16,6 +16,7 @@ export interface IShortenerState {
   allUrl: IAllURL | null;
   redirectResult: any;
   loading: boolean;
+
   error: string | null;
 }
 

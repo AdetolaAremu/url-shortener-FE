@@ -55,7 +55,13 @@ export const redirectURL = createAsyncThunk<
     const response = await axios.get(`${service_url}/${shortCode}`);
     return response;
   } catch (error: any) {
-    return thunkAPI.rejectWithValue(error.message);
+    if (error.response?.status === 404) {
+      return thunkAPI.rejectWithValue("Oops! You must be lost");
+    }
+
+    return thunkAPI.rejectWithValue(
+      "Something went wrong or the URL is not correct"
+    );
   }
 });
 

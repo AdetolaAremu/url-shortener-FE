@@ -22,6 +22,7 @@ const initialState: IShortenerState = {
   allUrl: null,
   loading: false,
   error: null,
+  // redirectError: null,
 };
 
 const shortenerSlice = createSlice({
@@ -38,11 +39,11 @@ const shortenerSlice = createSlice({
       state.error = null;
       state.loading = false;
     },
-    clearRedirectResult: (state) => {
-      state.redirectResult = null;
-      state.error = null;
-      state.loading = false;
-    },
+    // clearRedirectResult: (state) => {
+    //   state.redirectResult = null;
+    //   state.redirectError = null;
+    //   state.loading = false;
+    // },
     clearStatData: (state) => {
       state.shortCodeStat = null;
       state.error = null;
@@ -90,18 +91,18 @@ const shortenerSlice = createSlice({
       })
 
       // redirect
-      .addCase(redirectURL.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(redirectURL.fulfilled, (state, action: PayloadAction<any>) => {
-        state.loading = false;
-        state.redirectResult = action.payload;
-      })
-      .addCase(redirectURL.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload ?? "Failed to redirect";
-      })
+      // .addCase(redirectURL.pending, (state) => {
+      //   state.loading = true;
+      //   state.redirectError = null;
+      // })
+      // .addCase(redirectURL.fulfilled, (state, action: PayloadAction<any>) => {
+      //   state.loading = false;
+      //   state.redirectResult = action.payload;
+      // })
+      // .addCase(redirectURL.rejected, (state, action) => {
+      //   state.loading = false;
+      //   state.redirectError = action.payload ?? "Failed to redirect";
+      // })
 
       // stat
       .addCase(getShortCodeStat.pending, (state) => {
@@ -140,7 +141,7 @@ const shortenerSlice = createSlice({
 export const {
   clearEncodedData,
   clearDecodeData,
-  clearRedirectResult,
+  // clearRedirectResult,
   clearStatData,
 } = shortenerSlice.actions;
 export default shortenerSlice.reducer;
