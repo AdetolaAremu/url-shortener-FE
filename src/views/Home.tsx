@@ -21,7 +21,6 @@ const Home = () => {
   );
 
   const handleTabSwitch = (tab: Tab) => {
-    // console.log(tab, "tabbbb");
     setCurrentTab(tab);
     dispatch(clearEncodedData());
     dispatch(clearDecodeData());
@@ -107,10 +106,29 @@ const Home = () => {
       {(currentTab === "encode" && encodeData?.shortenedlink) ||
       (currentTab === "decode" && decodeData?.originalURL) ||
       error ? (
-        <div className="bg-white w-[20rem] px-2 py-2 text-center text-sm text-gray-600">
-          {currentTab === "encode" && encodeData?.shortenedlink}
-          {currentTab === "decode" && decodeData?.originalURL}
-          {error && <span className="text-red-500">{error}</span>}
+        <div className="bg-white w-[20rem] px-2 py-2 text-center text-sm text-gray-600 space-y-2">
+          <div>
+            {currentTab === "encode" && encodeData?.shortenedlink}
+            {currentTab === "decode" && decodeData?.originalURL}
+            {error && <span className="text-red-500">{error}</span>}
+          </div>
+
+          {!error && (
+            <button
+              onClick={() => {
+                const textToCopy =
+                  currentTab === "encode"
+                    ? encodeData?.shortenedlink
+                    : decodeData?.originalURL;
+                if (textToCopy) {
+                  navigator.clipboard.writeText(textToCopy);
+                }
+              }}
+              className="mt-1 text-blue-500 hover:underline text-xs"
+            >
+              Copy to clipboard
+            </button>
+          )}
         </div>
       ) : null}
     </div>
