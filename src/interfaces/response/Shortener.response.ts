@@ -16,7 +16,7 @@ export interface IStatResponse {
   mostVisitedCountry: string;
   mostVisitedRegion: string;
   totalHits: number;
-  lastFifteenHits: {
+  las15Hits: {
     ip: string;
     agent: string;
     country: string;
