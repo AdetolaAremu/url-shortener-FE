@@ -1,55 +1,5 @@
 import { useState } from "react";
-
-const endpoints = [
-  {
-    method: "POST",
-    path: "/api/v1/encode",
-    description: "Shortens a given URL and returns the shortened version.",
-    body: {
-      url: "https://very-long-url.com",
-    },
-    response: {
-      success: true,
-      data: {
-        shortenedlink: "https://shortn.er/abc123",
-      },
-    },
-  },
-  {
-    method: "POST",
-    path: "/api/v1/decode",
-    description: "Retrieves the shortened URL's original URL",
-    body: {
-      url: "https://indi.na/Bp9B13",
-    },
-    response: {
-      success: true,
-      data: {
-        id: "213b4087-0f71-424f-b3b5-b8179c6db5b7",
-        shorCode: "Bp9B13",
-        originalURL:
-          "https://example-of-a-very-long-url.com/with/multiple/paths",
-        generatedURL: "https://indi.na/Bp9B13",
-      },
-    },
-  },
-  {
-    method: "GET",
-    path: "/api/:shortCode",
-    description: "Redirects the shortened URL to the original URL",
-  },
-  {
-    method: "GET",
-    path: "/api/v1/statistics/:shortCode",
-    description: "Fetches details of a specific shortened URL by ID.",
-  },
-
-  {
-    method: "GET",
-    path: "/api/v1/list",
-    description: "Redirects to the original URL based on the short code.",
-  },
-];
+import { endpoints } from "../components/StaticData";
 
 const Documentation = () => {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
