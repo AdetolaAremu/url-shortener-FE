@@ -1,10 +1,19 @@
-import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import App from "./App.tsx";
+import { Provider } from "react-redux";
+import store from "./store/Store.ts";
+import { StrictMode } from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import PublicLayout from "./layouts/PublicLayout.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <App />
+    <Provider store={store}>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/*" element={<PublicLayout />} />
+        </Routes>
+      </BrowserRouter>
+    </Provider>
   </StrictMode>
 );
